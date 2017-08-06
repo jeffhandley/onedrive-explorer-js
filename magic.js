@@ -1,5 +1,9 @@
-function loadCameraRoll(url, done) {
+function loadCameraRoll(url, max, done) {
     url = url || "https://graph.microsoft.com/v1.0/me/drive/special/cameraRoll/children";
+    max = max || 200;
+
+    console.log('LOADING PHOTOS');
+
     $.ajax({
         url: url,
         dataType: "json",
@@ -10,8 +14,8 @@ function loadCameraRoll(url, done) {
             window.photos = (window.photos || []).concat(data.value);
             console.log("PHOTOS", window.photos.length);
 
-            if (data["@odata.nextLink"] && window.photos.length < 200) {
-                loadCameraRoll(data["@odata.nextLink"])
+            if (data["@odata.nextLink"] && window.photos.length < max) {
+                loadCameraRoll(data["@odata.nextLink"], max, done)
             } else if (done) {
                 done();
             }
@@ -40,7 +44,7 @@ function moveToYear(photo, done) {
     });
 }
 
-function moveNext(count) {
+function moveNext(count, done) {
     count = count || 1;
 
     if (count == -1) {
@@ -49,11 +53,13 @@ function moveNext(count) {
 
     var until = photos.length - count;
 
-    function done() {
+    function next() {
         console.log("REMAINING", photos.length, count - 1);
 
         if (photos.length > until) {
-            moveNext(photos.length - until);
+            moveNext(photos.length - until, done);
+        } else if (done) {
+            done();
         }
     }
 
@@ -63,19 +69,23 @@ function moveNext(count) {
 
     if (photo && photo.image) {
         moveToYear(photo, function() {
-            done();
+            next();
         });
     } else {
-        done();
+        next();
     }
 }
 
-function moveAll() {
+function moveAll(done) {
     for (var concurrent = 0; concurrent < 200; concurrent++) {
-        moveNext(-1);
+        moveNext(-1, done);
     }
 }
 
-function loadAndMoveNext() {
-    loadCameraRoll(null, moveAll);
+function loadAndMoveNext(done) {
+    if (!done) {
+        done = function() { console.log("ALL DONE"); }
+    }
+
+    loadCameraRoll(null, 1000, moveAll.bind(null, done));
 }
