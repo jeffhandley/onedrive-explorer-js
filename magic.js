@@ -1,4 +1,4 @@
-function loadCameraRoll(url) {
+function loadCameraRoll(url, done) {
     url = url || "https://graph.microsoft.com/v1.0/me/drive/special/cameraRoll/children";
     $.ajax({
         url: url,
@@ -10,9 +10,11 @@ function loadCameraRoll(url) {
             window.photos = (window.photos || []).concat(data.value);
             console.log("PHOTOS", window.photos.length);
 
-            if (data["@odata.nextLink"] && window.photos.length < 1000) {
+            if (data["@odata.nextLink"] && window.photos.length < 200) {
                 loadCameraRoll(data["@odata.nextLink"])
-            };
+            } else if (done) {
+                done();
+            }
         }
     });
 }
@@ -59,7 +61,21 @@ function moveNext(count) {
 
     var photo = photos.shift();
 
-    moveToYear(photo, function() {
+    if (photo && photo.image) {
+        moveToYear(photo, function() {
+            done();
+        });
+    } else {
         done();
-    });
+    }
+}
+
+function moveAll() {
+    for (var concurrent = 0; concurrent < 200; concurrent++) {
+        moveNext(-1);
+    }
+}
+
+function loadAndMoveNext() {
+    loadCameraRoll(null, moveAll);
 }
