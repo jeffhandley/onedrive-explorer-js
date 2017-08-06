@@ -1,0 +1,25 @@
+{
+  "name": "onedrive-explorer-js",
+  "version": "1.0.0",
+  "description": "This sample illustrates the basic concepts for interacting with OneDrive via Microsoft Graph API to create a file explorer web app.",
+  "main": "odauth.js",
+  "scripts": {
+    "start": "sudo babel-node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OneDrive/onedrive-explorer-js.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/OneDrive/onedrive-explorer-js/issues"
+  },
+  "homepage": "https://github.com/OneDrive/onedrive-explorer-js#readme",
+  "dependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-env": "^1.6.0",
+    "express": "^4.15.3"
+  }
+}

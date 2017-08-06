@@ -13,9 +13,9 @@
       // Register your own application at https://apps.dev.microsoft.com
       // and set the "clientId" and "redirectUri" variables accordingly.
       var appInfo = {
-        "clientId": "e9a57c07-69e4-41f5-b868-0f123d2fda17",
-        "redirectUri": "http://localhost:9999/callback.html",
-        "scopes": "user.read files.read files.read.all sites.read.all",
+        "clientId": "a08dfafa-1781-4028-9336-a8ac3a8755c9",
+        "redirectUri": "http://localhost/static/callback.html",
+        "scopes": "user.read files.readwrite.all",
         "authServiceUri": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize"
       };
       provideAppInfo(appInfo);
@@ -23,7 +23,7 @@
       // use Microsoft Graph v1.0
       var baseUrl = getQueryVariable("baseUrl")
       msGraphApiRoot = (baseUrl) ? baseUrl : "https://graph.microsoft.com/v1.0/me";
-      
+
       challengeForAuth();
 
       saveToCookie( { "apiRoot": msGraphApiRoot, "signedin": true } );
@@ -124,7 +124,7 @@
     </div>
     <div id="od-title">OneDrive Explorer Sample - JS</div>
   </div>
-  
+
   <div id="od-loading"></div>
   <div id="od-breadcrumb"></div>
   <div id="od-content">
@@ -238,6 +238,8 @@
           authWindow.close();
         }
 
+        window.token = token;
+
         (function($){
           // we extract the onedrive path from the url fragment and we
           // flank it with colons to use the api's path-based addressing scheme
@@ -281,7 +283,7 @@
                 // they'll be in an array called 'data'
                 var decodedPath = decodeURIComponent(path);
                 document.title = "OneDrive Explorer" + ((decodedPath.length > 0) ? " - " + decodedPath : "");
-                  
+
                 updateBreadcrumb(decodedPath);
                 var children = data.children || data.value;
                 if (children && children.length > 0) {
@@ -345,7 +347,7 @@
                   }
                 }
                 else {
-                  $('<p>No items in this folder.</p>').appendTo('#od-items');  
+                  $('<p>No items in this folder.</p>').appendTo('#od-items');
                 }
               } else {
                 $('#od-items').empty();
